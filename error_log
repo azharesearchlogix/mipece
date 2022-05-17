@@ -1,0 +1,34 @@
+[18-Aug-2020 08:24:22 America/Chicago] PHP Fatal error:  Cannot redeclare Dashboard::charges() in /home3/demo4esl/public_html/web/myteam/application/controllers/admin/Dashboard.php on line 686
+[23-Sep-2020 03:33:59 America/Chicago] PHP Fatal error:  Class 'REST_Controller' not found in /home3/demo4esl/public_html/web/myteam/application/controllers/Doctors.php on line 7
+[23-Sep-2020 03:47:30 America/Chicago] PHP Fatal error:  Class 'REST_Controller' not found in /home3/demo4esl/public_html/web/myteam/application/controllers/Doctors.php on line 7
+[23-Sep-2020 05:03:10 America/Chicago] PHP Fatal error:  require_once(): Failed opening required '/home3/demo4esl/public_html/web/myteam/application//libraries/RESTController.php' (include_path='.:/opt/php71/lib/php') in /home3/demo4esl/public_html/web/myteam/application/controllers/Test.php on line 6
+[23-Sep-2021 06:21:07 America/New_York] PHP Fatal error:  Cannot use empty array elements in arrays in /home/eslddgqp/public_html/app/myteam/application/controllers/Common.php on line 2155
+[23-Sep-2021 06:21:12 America/New_York] PHP Fatal error:  Cannot use empty array elements in arrays in /home/eslddgqp/public_html/app/myteam/application/controllers/Common.php on line 2155
+[23-Sep-2021 06:21:29 America/New_York] PHP Fatal error:  Cannot use empty array elements in arrays in /home/eslddgqp/public_html/app/myteam/application/controllers/Common.php on line 2155
+[09-Dec-2021 05:38:19 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:38:26 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:39:16 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:43:03 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:43:14 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:43:18 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:46:14 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:48:35 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:48:43 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:49:14 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:49:27 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:51:03 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:51:05 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:52:04 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:52:19 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:52:21 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:52:26 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:52:30 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:55:45 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:57:17 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 05:57:23 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 06:02:29 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 06:21:23 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 06:21:30 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 06:21:52 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[09-Dec-2021 06:22:24 America/New_York] PHP Fatal error:  Cannot redeclare Provider::xaithreeNew_post() in /home/eslddgqp/public_html/app/myteam/application/controllers/Provider.php on line 5781
+[13-May-2022 09:00:48 America/New_York] PHP Fatal error:  Cannot use empty array elements in arrays in /home/eslddgqp/public_html/app/mipece/application/controllers/User.php on line 4848

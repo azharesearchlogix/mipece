@@ -1,0 +1,109 @@
+ *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            font-family:  Arial, sans-serif;
+        }
+        #invoice-preview{
+            width: 100%;
+            margin: 10px 0 10px 0;
+            height:100%;
+        }
+        #invoice-data{
+            border: 1px solid #0D83DD;
+            background-color: #F5FBFE;
+        }
+        p,h1{
+            margin-top: 10px;
+        }
+        small{
+            margin-bottom: 10px;
+            color: #8F8A7C;
+        }
+        .total-amount h1{
+            font-size: 38px;
+        }
+        table{
+            width: 100%;
+        }
+        th{
+            color: #0D83DD;
+            font-size: 14px;
+        }
+        th,td{
+            text-align: center;
+        }
+        #invoice-logo img{
+            width: 30%;
+        }
+        #invoice-text{
+            font-size: 54px;
+        }
+        p{
+            font-size: 14px;
+        }
+        @media(max-width:1150px){
+            th,td{
+                font-size: 13px;
+            }
+        }
+        @media(max-width:998px){
+            #invoice-preview{
+                width: 75%;
+            }
+            #invoice-text{
+                font-size: 44px;
+            }
+        }
+        @media(max-width:798px){
+            #invoice-preview{
+                width: 90%;
+            }
+            #invoice-logo img{
+                width: 50%;
+            }
+            #invoice-text{
+                font-size: 34px;
+            }
+        }
+        @media(max-width:690px){
+            th,td{
+                font-size: 12px;
+            }
+            #invoice-text{
+                font-size: 28px;
+            }
+        }
+        #total-amount{
+            text-align: right;
+        }
+        @media(max-width:450px){
+            #invoice-preview{
+                width: 96%;
+            }
+            th,td{
+                font-size: 10px;
+            }
+            #invoice-text{
+                font-size: 24px;
+            }
+            #sp-details p{
+                font-size: 12px;
+            }
+            
+        }
+        #billing-details{
+            justify-content: space-between;
+        }
+        @media(max-width:400px){
+            #total-amount{
+                text-align: center;
+            }
+            #billing-details{
+                justify-content: space-around;
+            }
+        }
