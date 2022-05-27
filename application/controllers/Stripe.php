@@ -176,14 +176,39 @@ class Stripe extends REST_Controller {
                          $data['discount'] = $promo->discount;
                          $this->db->where('id',$promocode_id)->set('is_expire','1')->update('tbl_promocode');
                     }
-//                    echo '<pre>';
-//                    print_r($data);
-//                    die;
 
                     $this->db->insert('tbl_payment', $data);
                       $my_insert = $this->db->insert_id();
                     if ($this->db->insert_id() > 0) {
-                         $invoice_id = $this->input->post('invoice_id');
+                        $payment_type = $this->input->payment_type('payment_type');
+                        /*------------------ Add Pyamnet in wallet------------*/
+                        if($payment_type == 'wallet')
+                        {
+                            $walletData = [
+                                'user_id' => $user_id,
+                                'order_id' => $order_id,
+                                'amount' =>  $data['amount'],
+                                'in_or_out' => '0',
+                            ];
+                            $this->db->insert('tbl_ewallet',$walletData);
+                        }
+                        /*---------------- Payment for subscription----------*/
+                        if($payment_type == 'subscription')
+                        {
+                            $user_id = $this->input->post('user_id');
+                            $check = $this->db->get_where('tbl_subscription' ,['user_id'=>$user_id])->num_rows();
+                            if($check>0)
+                            {
+                                $this->db->set('status','0')->where('user_id',$user_id)->update('tbl_subscription');
+                            }else{
+                                $this->db->insert('tbl_subscription',['user_id'=>$user_id , 'package_id'=>1 , 'status'=>'0']);
+                            }
+                        }
+
+                        
+
+                        
+                        /* $invoice_id = $this->input->post('invoice_id');
                         if(!empty($invoice_id))
                         {
                             $myInv = $this->db->get_where('tbl_invoice',['id'=>$invoice_id])->row();
@@ -211,7 +236,7 @@ class Stripe extends REST_Controller {
                             }else{
                                 $this->db->insert('tbl_subscription',['user_id'=>$user_id , 'package_id'=>1 , 'status'=>'0']);
                             }
-                        }
+                        }*/
                         $this->response(
                                 ['status' => 'success',
                                     'responsecode' => REST_Controller::HTTP_OK,
@@ -227,21 +252,5 @@ class Stripe extends REST_Controller {
                         ]);
                     }
                 }
-        //     } else {
-
-        //         $this->response(
-        //                 ['status' => 'Failed',
-        //                     'message' => 'Invalid Token',
-        //                     'responsecode' => REST_Controller::HTTP_FORBIDDEN,
-        //         ]);
-        //     }
-        // } else {
-
-        //     $this->response(
-        //             ['status' => 'Failed',
-        //                 'message' => 'Unauthorised Access',
-        //                 'responsecode' => REST_Controller::HTTP_BAD_GATEWAY,
-        //     ]);
-        // }
     }
 }

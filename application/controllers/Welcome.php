@@ -6,6 +6,9 @@ class Welcome extends CI_Controller {
 
 	public function index()
 	{
+         $res = $this->Mail->sendmail('azharmohd1996@gmail.com', 'My piece registration successfully!', '<p>My name is azhar</p>');
+         print_r($res);
+         exit;
 		//$this->load->view('common/header');
 		$this->load->view('home');
 		//$this->load->view('common/footer');

@@ -526,8 +526,8 @@ $config['rewrite_short_tags'] = FALSE;
 $config['proxy_ips'] = '';
 
 //Stripe details
-$config['stripe_key'] = 'pk_test_51Hql3rHQMxQ2t2xj9qfg1nMKA4ldxUKlK3ktNDrtvStuakYXfiqxaSSJ2vZYPLyqLX4oBuSgTFJ0nJ7z62BupCun00nMjytNlP';
-$config['stripe_secret'] = 'sk_test_51Hql3rHQMxQ2t2xj1j5tlWDWWIYBlkNaL3mWV43osx8Hu1aHgfvABrfjHyrgGPXsPhMtF6ytmsamnzCTJn2uOpGh00ihwwYS5u';
+$config['stripe_key'] = 'pk_test_51KFMxIEyRz5Ozo3K8EDSYiWl9uKPps3WMsNJUxF9nUgFa67i1Enkw2CxR8l8VJrp4zmZP2aL0Z4tBMYykmNROkae00ACrCLiiH';
+$config['stripe_secret'] = 'sk_test_51KFMxIEyRz5Ozo3KJ5xdcWjVfs9CNyiCZ7NVimTMASHYhm0LFsujdHxghcB8jnP3R1tr7aQkXZwmD8OSpJI5ZJ0l00FOIIMrWI';
 
 ///Twilio Secrete By Arvind Singh////////////    
 $config['twilioAccountSid'] = 'ACab2fa9a80071e57aba9cd71e36a19d3b';//AC8e9a1f02b356cd4391666864f2939860
