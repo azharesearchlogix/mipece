@@ -166,6 +166,11 @@ public function getWalletAmount_get($user_id = '')
          }else{
          if($offer_letter->agreement_id != 0)//when sp request to sc
          {
+            $commission = $this->db->select('commission')->get_where('tbl_client_agreement',['id'=>$offer_letter->agreement_id])->row('commission');
+            $total_amount = ($sum * $offer_letter->pay_rate);
+            $cal_comm = ($total_amount * $commission) /100;
+            $payble_amount = ($total_amount+$cal_comm);
+
             $bulkPayment = [
                 'userid' => 0,
                 'scid' => $offer_letter->client_id,
@@ -174,7 +179,10 @@ public function getWalletAmount_get($user_id = '')
                 'task_ids' => $tids,
                 'total_hours' => $sum,
                 'payrate' => $offer_letter->pay_rate,
-                'amount_pay' => ($sum * $offer_letter->pay_rate)
+                'total_amount' => $total_amount,
+                'amount_pay' =>  $payble_amount,
+                'commission' => $commission,
+                'commission_amount' => $cal_comm,
             ];    
          }
          else{                    
@@ -187,7 +195,10 @@ public function getWalletAmount_get($user_id = '')
                 'task_ids' => $tids,
                 'total_hours' => $sum,
                 'payrate' => $offer_letter->pay_rate,
-                'amount_pay' => ($sum * $offer_letter->pay_rate)
+                'total_amount' => ($sum * $offer_letter->pay_rate),
+                'amount_pay' => ($sum * $offer_letter->pay_rate),
+                'commission' => 0.00,
+                'commission_amount' => 0.00,
             ];                   
          }
          }
@@ -406,6 +417,7 @@ function getAmt($user_type , $user_id)
                 'clientname' => ucwords($offer_letter->name),
                 'payrate' => $offer_letter->pay_rate,
                 'commission' => "0",
+                'total_hours' => $sum,
                 'payableamount' => "$payble_amount",
                  'tasklist' =>  $taskWiseData,
             ];
@@ -869,7 +881,9 @@ function getAmt($user_type , $user_id)
                     'teamname' => ucwords($payment->teamname),
                     'total_hours' => $payment->total_hours,
                     'payrate' => $payment->payrate,
+                    'total_amount' => $payment->total_amount,
                     'commission' => $payment->commission,
+                    'commission_amount' => $payment->commission_amount,
                     'amount_pay' => $payment->amount_pay,
                     'request_date' => date('Y-m-d' , strtotime($payment->created_at)),
                     'tasklist' => $taskData
@@ -975,12 +989,14 @@ public function sendPayment_post()
             $this->db->update_batch('tbl_taskwise_payment',$updateTaskWiseTable , 'taskid');
             $this->db->update_batch('assigntask',$updateTaskTable , 'id');
             $this->db->where('id',$paymentid)->set(['payment_status'=>'1' , 'payment_date'=>date('Y-m-d') , 'is_expire'=>'1'])->update('tbl_bulkpayment_request');
-            $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'1']);//minus amount from client wallet
+           
             if($paymentData->agreement_id!=0)
             {
-                 $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'0' , 'sc_id'=>$paymentData->scid]);//send payment to sc
+                 $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'0' , 'sc_id'=>$paymentData->scid , 'payment_id'=>$paymentid]);//send payment to sc
+                  $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'1' ,'sc_id'=>$paymentData->scid , 'payment_id'=>$paymentid]);//minus amount from client wallet
             }else{
-                $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'0' , 'sp_id'=>$paymentData->spid]);//send payment to direct sp
+                $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'0' , 'sp_id'=>$paymentData->spid , 'payment_id'=>$paymentid]);//send payment to direct sp
+                $this->db->insert('tbl_ewallet' ,['user_id'=>$userid , 'amount'=>$payment_for_pay , 'in_or_out'=>'1' ,'sc_id'=>$paymentData->spid , 'payment_id'=>$paymentid]);//minus amount from client wallet
             } 
             $this->db->trans_complete();
                 if ($this->db->trans_status() === FALSE)
@@ -1067,6 +1083,184 @@ public function sendPayment_post()
     }
 }
 
+
+}
+
+//wallet history
+public function walletHistory_get($user_id = '')
+{
+    $tokenid = $this->security->xss_clean($this->input->get_request_header('Secret-Key'));
+    $check_key = $this->authentication($user_id , $tokenid);
+    $switch_account = $check_key['success']->switch_account;
+    if($switch_account == '1')//user wallet history
+    {
+        $history = $this->db->select('a.* , CONCAT(b.firstname , " ", b.lastname) as scname , CONCAT(c.firstname , " ", c.lastname) as spname')
+                            ->from('tbl_ewallet as a')
+                            ->join('logincr as b' , 'b.id = a.sc_id' ,'left')
+                            ->join('logincr as c' , 'c.id = a.sp_id' ,'left')
+                            ->where(['a.user_id'=>$user_id])
+                            ->order_by('a.created_at DESC')
+                            ->get()
+                            ->result();        
+            if($history)
+            {
+            foreach($history as $his)
+            {
+                if($his->user_id == $user_id && ($his->sc_id!=0 || $his->sp_id!=0)  && $his->in_or_out == '0')
+                {
+                    continue;
+                }else{
+                    $received_from = '';
+                    if($his->in_or_out == '1')
+                {
+                    if(!empty($his->scname))
+                    {
+                        $sendto_name = $his->scname;
+                    }else if(!empty($his->client_name))
+                    {
+                        $sendto_name = $his->client_name;
+                    }
+                }else{
+                    $sendto_name = '';
+                    $received_from = 'Self';
+                }
+
+                    $transData[] = [
+                        'amount' => $his->amount,
+                        'type' => ($his->in_or_out == '0')?'Credit':'Debit',
+                        'sendto_name' => $sendto_name,
+                        'received_from' => $received_from,
+                        'date' => date('d/m/Y H:i:s'),
+
+                    ];
+                }
+            }
+             return $this->response([
+                'status' => 'success',
+                'responsecode' => REST_Controller::HTTP_OK,
+                'message' => 'Data found successfully!',
+                'data' => $transData
+
+                ]);
+            }else{
+             return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_NOT_FOUND,
+                    'message' => 'No data found!',
+
+            ]);
+            }            
+    }else if($switch_account == '2')//staffing company wallet history
+    {
+        $history_in= $this->db->select('a.* , CONCAT(b.firstname , " ", b.lastname) as client_name , CONCAT(c.firstname , " ", c.lastname) as spname')
+                            ->from('tbl_ewallet as a')
+                            ->join('logincr as b' , 'b.id = a.user_id' ,'left')
+                            ->join('logincr as c' , 'c.id = a.sp_id' ,'left')
+                            ->where(['a.sc_id'=>$user_id , 'user_id!='=>0 , 'sp_id'=>0 , 'in_or_out'=>'0'])
+                            ->order_by('a.created_at DESC')
+                            ->get()
+                            ->result();
+                            $history_out= $this->db->select('a.* , CONCAT(b.firstname , " ", b.lastname) as client_name , CONCAT(c.firstname , " ", c.lastname) as spname')
+                            ->from('tbl_ewallet as a')
+                            ->join('logincr as b' , 'b.id = a.user_id' ,'left')
+                            ->join('logincr as c' , 'c.id = a.sp_id' ,'left')
+                            ->where(['a.sc_id'=>$user_id , 'user_id'=>0 , 'sp_id!='=>0 , 'in_or_out'=>'1'])
+                            ->order_by('a.created_at DESC')
+                            ->get()
+                            ->result();    
+            $history = array_merge($history_in , $history_out);                    
+            if($history)
+            {
+            foreach($history as $his)
+            {
+               
+               $sendto_name = '';
+                    if($his->in_or_out == '0')
+                {
+                    $from_name = $his->client_name;
+                }else{
+                    $from_name = '';
+                    $sendto_name = $his->spname;
+
+                }
+               
+                    $transData[] = [
+                        'amount' => $his->amount,
+                        'type' => ($his->in_or_out == '0')?'Credit':'Debit',
+                        'received_from' => $from_name,
+                        'sendto_name' => $sendto_name,
+                        'date' => date('d/m/Y H:i:s'),
+                        
+
+                    ];
+               
+            }
+             return $this->response([
+                'status' => 'success',
+                'responsecode' => REST_Controller::HTTP_OK,
+                'message' => 'Data found successfully!',
+                'data' => $transData
+
+                ]);
+            }else{
+             return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_NOT_FOUND,
+                    'message' => 'No data found!',
+
+            ]);
+            }    
+    }else{//service provider wallet history
+        $history = $this->db->select('a.* , CONCAT(b.firstname , " ", b.lastname) as client_name , CONCAT(c.firstname , " ", c.lastname) as scname')
+                            ->from('tbl_ewallet as a')
+                            ->join('logincr as b' , 'b.id = a.user_id' ,'left')
+                            ->join('logincr as c' , 'c.id = a.sc_id' ,'left')
+                            ->where(['a.sp_id'=>$user_id])
+                            ->order_by('a.created_at DESC')
+                            ->get()
+                                ->result();        
+            if($history)
+            {
+            foreach($history as $his)
+            {
+                if($his->in_or_out == '0')
+                {
+                    if(!empty($his->scname))
+                    {
+                        $from_name = $his->scname;
+                    }else if(!empty($his->client_name))
+                    {
+                        $from_name = $his->client_name;
+                    }
+                }else{
+                    $from_name = '';
+                }
+               
+                    $transData[] = [
+                        'amount' => $his->amount,
+                        'type' => ($his->in_or_out == '0')?'Credit':'Debit',
+                        'received_from' => $from_name,
+                        'date' => date('d/m/Y H:i:s'),
+
+                    ];
+               
+            }
+             return $this->response([
+                'status' => 'success',
+                'responsecode' => REST_Controller::HTTP_OK,
+                'message' => 'Data found successfully!',
+                'data' => $transData
+
+                ]);
+            }else{
+             return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_NOT_FOUND,
+                    'message' => 'No data found!',
+
+            ]);
+            } 
+    }
 
 }
 
