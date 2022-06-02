@@ -538,7 +538,7 @@ class Myteam extends CI_Controller {
         $industry = $this->input->post('industry');
         $skills = $this->input->post('skills');
 
-        //echo "SELECT * FROM `userskill` WHERE experience='".$experience."' OR industry='".$industry."' OR skills='".$skills."' ";	  
+        //echo "SELECT * FROM `userskill` WHERE experience='".$experience."' OR industry='".$industry."' OR skills='".$skills."' ";   
         $query = $this->db->query("SELECT * FROM `userskill` WHERE experience='" . $experience . "' OR industry='" . $industry . "' OR skills='" . $skills . "' ");
         $record = $query->result();
         $total = $query->num_rows();
@@ -578,11 +578,11 @@ class Myteam extends CI_Controller {
                         'bio' => $row->about,
                         'rating' => $row->rating,
                         //'education'      => $row->education,
-                        //'collegename'    => $row->collegename,		
-                        //'passingyear'    => $row->passingyear,								
+                        //'collegename'    => $row->collegename,        
+                        //'passingyear'    => $row->passingyear,                                
                         'experience' => $row->experience,
                             //'industry'       => $row->industry,
-                            //'skills'         => $row->skills,	
+                            //'skills'         => $row->skills, 
                     );
                 }
             }
@@ -783,14 +783,14 @@ class Myteam extends CI_Controller {
                 $update_value = $this->Common_model->updateData('scheduleinterview', $data, 'id="' . $interviewid . '" ');
 
                 if ($update_value) {
-
+                        $device_type = device_type($provider_data->sourcemedia);
                     $message = [
                         'title' => 'Interview rescheduled',
                         'body' => 'Your interview is rescheduled',
                         'icon' => base_url('upload/images/notification.png')
                     ];
                     $notification_data = [
-                        'device_tpye' => $this->input->post('device_tpye'),
+                        'device_tpye' => "$device_type",
                         'device_token' => $provider_data->tokenid,
                     ];
                     $response = $this->NotificationModel->index($notification_data, $message);
@@ -839,13 +839,14 @@ class Myteam extends CI_Controller {
                     $insertId = $this->db->insert('scheduleinterview', $insert_array);
                     $lastid = $this->db->insert_id();
                     if ($insertId) {
+                         $device_type = device_type($provider_data->sourcemedia);
                         $message = [
                             'title' => 'Interview Scheduled',
                             'body' => 'Your interview is scheduled',
                             'icon' => base_url('upload/images/notification.png')
                         ];
                         $notification_data = [
-                            'device_tpye' => $this->input->post('device_tpye'),
+                            'device_tpye' => "$device_type",
                             'device_token' => $provider_data->tokenid,
                         ];
                         $response = $this->NotificationModel->index($notification_data, $message);
@@ -902,14 +903,14 @@ class Myteam extends CI_Controller {
             $update_value = $this->Common_model->updateData('scheduleinterview', $data, 'id="' . $interviewid . '" ');
 
             if ($update_value) {
-
+                  $device_type = device_type($provider_data->sourcemedia);
                 $message = [
                     'title' => 'Interview canceled',
                     'body' => 'Your Interview canceled',
                     'icon' => base_url('upload/images/notification.png')
                 ];
                 $notification_data = [
-                    'device_tpye' => $this->input->post('device_tpye'),
+                    'device_tpye' => "$device_type",
                     'device_token' => $provider_data->tokenid,
                 ];
                 $response = $this->NotificationModel->index($notification_data, $message);
@@ -1131,15 +1132,17 @@ class Myteam extends CI_Controller {
             if ($update_value) {
 
                 $provider_data = $this->db->get_where('logincr', ['id' => $spid])->row();
+                $device_type = device_type($provider_data->sourcemedia);
                 $message = [
                     'title' => 'Status is ' . $status,
-                    'body' => 'Status is ' . $status,
+                    'body' => 'Sp Interview Status is ' . $status,
                     'icon' => base_url('upload/images/notification.png')
                 ];
                 $notification_data = [
-                    'device_tpye' => $this->input->post('device_tpye'),
+                    'device_tpye' => "$device_type",
                     'device_token' => $provider_data->tokenid,
                 ];
+                
                 $response = $this->NotificationModel->index($notification_data, $message);
                 $message['user_id'] = $spid;
                 $this->db->insert('tbl_notification', $message);
@@ -1381,7 +1384,7 @@ class Myteam extends CI_Controller {
 
             $insertId = $this->db->insert('myteamnotes', $data);
 
-            //	$get_recordD = $this->Common_model->common_getRow('myteamnotes', 'teamid="'.$teamid.'" ORDER BY id DESC');
+            //  $get_recordD = $this->Common_model->common_getRow('myteamnotes', 'teamid="'.$teamid.'" ORDER BY id DESC');
 
             $userQuery = $this->db->query("SELECT * FROM `myteamnotes` WHERE teamid='" . $teamid . "' ORDER BY id ASC");
             $get_records = $userQuery->result();
@@ -1448,7 +1451,7 @@ class Myteam extends CI_Controller {
                 'status' => '0'
             );
 
-            // 	 print_r($data); die;
+            //   print_r($data); die;
 
             $insertId = $this->db->insert('assigntask', $data);
             $lastid = $this->db->insert_id();
@@ -1527,7 +1530,7 @@ class Myteam extends CI_Controller {
         $userid = $this->input->post('id');
         $teamid = $this->input->post('teamid');
         $spid = $this->input->post('spid');
-//	$taskid    = $this->input->post('taskid');
+//  $taskid    = $this->input->post('taskid');
 
         $reason1 = $this->input->post('reason1');
         $reason2 = $this->input->post('reason2');
@@ -1564,9 +1567,9 @@ class Myteam extends CI_Controller {
                     'create_at' => $date,
                     'update_at' => $date,
                 );
-                // 	 echo '<pre>';
-                // 	 print_r($data);
-                // 	 die;
+                //   echo '<pre>';
+                //   print_r($data);
+                //   die;
 
                 $task = $this->db->get_where('assigntask', ['spid' => $spid, 'teamid' => $teamid])->result();
                 if (count($task) > 0) {
@@ -1579,7 +1582,7 @@ class Myteam extends CI_Controller {
                         'update_at' => $date,
                     );
 
-                    //	$update_data = $this->Common_model->updateData('assigntask', $dataupdate, 'id="'.$taskid.'"');
+                    //  $update_data = $this->Common_model->updateData('assigntask', $dataupdate, 'id="'.$taskid.'"');
                     $update_data = $this->Common_model->updateData('assigntask', $dataupdate, 'spid="' . $spid . '"');
 
                     if ($insertId) {
@@ -1766,7 +1769,7 @@ class Myteam extends CI_Controller {
 
                 $query = $this->db->query("SELECT * FROM `assigntask` WHERE spid='" . $spid . "' AND taskstatus!='Replacement Pending'");
                 $record = $query->result();
-// 		print_r($record);
+//      print_r($record);
                 $total = $query->num_rows();
                 if ($total > 0) {
 

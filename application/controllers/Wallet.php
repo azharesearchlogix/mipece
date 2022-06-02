@@ -1263,6 +1263,226 @@ public function walletHistory_get($user_id = '')
     }
 
 }
+// get bank details
+                    public function getBankdetail_get($userid = '')
+                    {
+  
+                    $token = $this->security->xss_clean($this->input->get_request_header('Secret-Key'));
+                    $this->authentication($userid , $token);
+
+                    $check_record = $this->db->get_where('bankdetails',['userid'=>$userid])->row();
+                    if($check_record){
+                    $dataa_array  = array(
+                    'bankid'            => $check_record->id,
+                    'cardholdername'    => $check_record->cardHoldername,
+                    'bankname'          => $check_record->bankName,
+                    'accountno'         => $check_record->accountNo,
+                    'ifsccode'          => $check_record->ifscCode,     
+                    'bankarea'          => $check_record->bankArea,
+                    );
+                    return $this->response([
+                    'status' => 'success',
+                    'responsecode' => REST_Controller::HTTP_OK,
+                    'message' => 'Data found successfully!',
+                    'is_status' => True,
+                    'data' => $dataa_array
+
+                    ]);
+                    }else{
+                    return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_NOT_FOUND,
+                    'is_status' => FALSE,
+                    'message' => 'No data found!',
+
+                    ]);
+
+                    }       
+
+                    }
+
+public function withdrawalRequest_post()
+{
+   $tokenid = $this->security->xss_clean($this->input->get_request_header('Secret-Key'));
+   $userid = $this->security->xss_clean($this->input->post('userid'));
+   $check_key = $this->authentication($userid , $tokenid);
+   $amount = $this->security->xss_clean($this->input->post('amount'));
+   if($check_key['success']->switch_account == '0')// request as a service provider
+   { 
+    $wallet = $this->getAmt('0' , $userid);
+    $wallet_balance = ($wallet['wallet_left_amount']);
+    if($amount>$wallet_balance)
+    {
+         return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'You have not sufficient balance to withdrawal amount!',
+
+                    ]);
+    }else{
+        $myData = [
+            'userid' => $userid,
+            'amount' => $amount,
+            'request_as_a' => '0',
+        ];
+        $this->db->insert('tbl_withdraw_request' , $myData);
+        if($this->db->affected_rows() > 0)
+        {
+            $insert_id = $this->db->insert_id();
+            return $this->response([
+                'status' => 'success',
+                'responsecode' => REST_Controller::HTTP_OK,
+                'message' => 'Withdrawal request added successfully',
+                'request_id' => "$insert_id",
+            ]);
+        }else{
+            return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'Withdrawal request not added!',
+
+                    ]); 
+        }
+    }
+   }else if($check_key['success']->switch_account == '2')//request as a staffing companies
+   {
+   $wallet = $this->getAmt('0' , $userid);
+   $wallet_balance = ($wallet['wallet_left_amount']);
+   if($amount>$wallet_balance)
+    {
+         return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'You have not sufficient balance to withdrawal amount!',
+
+                    ]);
+    }else{
+         $myData = [
+            'userid' => $userid,
+            'amount' => $amount,
+            'request_as_a' => '2',
+        ];
+        $this->db->insert('tbl_withdraw_request' , $myData);
+        if($this->db->affected_rows() > 0)
+        {
+            $insert_id = $this->db->insert_id();
+            return $this->response([
+                'status' => 'success',
+                'responsecode' => REST_Controller::HTTP_OK,
+                'message' => 'Withdrawal request added successfully',
+                'request_id' => "$insert_id",
+            ]);
+        }else{
+            return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'Withdrawal request not added!',
+
+                    ]); 
+        }
+    }
+   }else{
+    return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'You can request for withdrawal as a user!',
+
+                    ]);
+   }
+}
+public function sendPaymentScToSp_post()
+{
+    $tokenid = $this->security->xss_clean($this->input->get_request_header('Secret-Key'));
+    $scid = $this->security->xss_clean($this->input->post('scid'));//payment sender id
+    $spid = $this->security->xss_clean($this->input->post('spid'));//payment sender id
+    $amount = $this->security->xss_clean($this->input->post('amount'));//payment sender id
+    $payment_id = $this->security->xss_clean($this->input->post('payment_id'));//payment sender id
+    $check_key = $this->authentication($userid , $tokenid);
+  
+    $config = [
+
+        ['field'=>'scid' , 'label'=>'scid' , 'rules'=>'trim|required|is_numeric' , 
+        'errors' => [
+            'required' => 'Sc id is required',
+            'is_numeric' => 'Sc id should be numeric'
+        ]
+    ],
+     ['field'=>'spid' , 'label'=>'spid' , 'rules'=>'trim|required|is_numeric' , 
+        'errors' => [
+            'required' => 'Sp id is required',
+            'is_numeric' => 'Sp id should be numeric'
+        ]
+    ],
+     ['field'=>'amount' , 'label'=>'amount' , 'rules'=>'trim|required|is_numeric' , 
+        'errors' => [
+            'required' => 'Amount id is required',
+            'is_numeric' => 'Amount id should be numeric'
+        ]
+    ],
+    ['field'=>'payment_id' , 'label'=>'payment_id' , 'rules'=>'trim|required|is_numeric' , 
+        'errors' => [
+            'required' => 'Payment id is required',
+            'is_numeric' => 'Payment id should be numeric'
+        ]
+    ],
+
+    ];
+    $this->form_validation->set_data($this->security->xss_clean($this->input->post()));
+    $this->form_validation->set_rules($config);
+    if($this->form_validation->run() == FALSE)
+    {
+         return $this->response([
+                'status' => 'false',
+                'responsecode' => REST_Controller::HTTP_NOT_FOUND,
+                'errors' => $this->form_validation->error_array(),
+
+        ]);
+    }else{
+          $data = $this->getAmt('2', $scid);  
+          $wallet_balance = $data['wallet_left_amount'];
+          if($amount > $wallet_balance)
+          {
+             return $this->response([
+                    'status' => 'false',
+                    'responsecode' => REST_Controller::HTTP_FORBIDDEN,
+                    'message' => 'You have not sufficient balance in your wallet to pay!',
+
+                    ]); 
+          }else{
+            $minusWalletSc = [
+                'sc_id' => $scid,
+                'amount' => $amount,
+                'in_or_out' => '1'
+            ]; 
+            $addToSp = [
+                 'sc_id' => $scid,
+                 'sp_id' => $spid,
+                'amount' => $amount,
+                'in_or_out' => '0'
+
+            ];
+            $this->db->trans_begin();
+            $this->db->insert('tbl_ewallet',$minusWalletSc);
+            $this->db->insert('tbl_ewallet',$addToSp);
+            $this->db->set([])->where('id',$payment_id)->update('tbl_bulkpayment_request');
+            $this->db->trans_complete();
+
+            if($this->db->trans_status() === TRUE)
+            {
+                 return $this->response( ['status' => 'success',
+                                'responsecode' => REST_Controller::HTTP_OK,
+                                'message' => 'Payment send successfully',
+                    ]); 
+            }else{
+                return $this->response( ['status' => 'false',
+                                'responsecode' => REST_Controller::HTTP_BAD_REQUEST,
+                                'message' => 'Payment not send successfully!',
+                                
+                    ]);  
+            }
+          }
+        }
+}
 
 
 

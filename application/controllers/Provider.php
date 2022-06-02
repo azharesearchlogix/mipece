@@ -800,13 +800,14 @@ public function interviewdetails_get() {
                     if ($this->db->affected_rows() > 0) {
                         
                         $provider_data = $this->db->get_where('logincr', ['id' => $udata->userid])->row();
+                        $device_type = device_type($provider_data->sourcemedia);
                         $message = [
                             'title' => 'Interview canceled',
                             'body' => 'Your interview has been canceled',
                             'icon' => base_url('upload/images/notification.png')
                         ];
                         $notification_data = [
-                            'device_tpye' => $this->input->post('device_tpye'),
+                            'device_tpye' => "$device_type",
                             'device_token' => $provider_data->tokenid,
                         ];
                         $response = $this->NotificationModel->index($notification_data, $message);
@@ -909,13 +910,14 @@ public function interviewdetails_get() {
                     if ($this->db->affected_rows() > 0) {
                         
                         $provider_data = $this->db->get_where('logincr', ['id' => $udata->userid])->row();
+                        $device_type = device_type($provider_data->sourcemedia);
                         $message = [
                             'title' => 'Interview re-scheduled',
                             'body' => 'Your interview re-scheduled has been done',
                             'icon' => base_url('upload/images/notification.png')
                         ];
                         $notification_data = [
-                            'device_tpye' => $this->put('device_tpye'),
+                            'device_tpye' => "$device_type",
                             'device_token' => $provider_data->tokenid,
                         ];
                         $response = $this->NotificationModel->index($notification_data, $message);
@@ -978,6 +980,7 @@ public function myselectedteam_get() {
                         ->get();
 //                echo $this->db->last_query(); die;
                 $result = $query->result();
+               
                 $team_id = [];
                 $dataArray =[];
                 foreach ($result as $val) {
@@ -5969,7 +5972,7 @@ public function xaioneNew_put() {
     
     
     public function xaitwoNew_post() {
-
+    $effected = '';
         $token = $this->input->get_request_header('Secret-Key');
         if ($token != '') {
             $user_id = $this->input->post('user_id');

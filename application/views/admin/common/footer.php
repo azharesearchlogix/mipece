@@ -365,6 +365,17 @@
         })
     });
 </script>
+<script type="text/javascript">
+    function changeStatus(pid , status , request_as_a)
+    {
+       if(pid!='')
+       {
+        $("#pid").val(pid);
+        $('#status option[value="'+status+'"]').attr("selected", "selected");
+        $("#usertype").val(request_as_a);
+       }
+    }
+</script>
 
 </body>
 
